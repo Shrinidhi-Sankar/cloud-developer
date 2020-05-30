@@ -35,7 +35,23 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   // Displays a simple message to the user
   app.get( "/", async ( req, res ) => {
     res.send("try GET /filteredimage?image_url={{}}")
-  } );
+  });
+
+  app.get( "/filteredimage/", async ( req, res ) => {
+    let image_url = req.query.image_url || req.headers.image_url;
+    console.log(req.query)
+    if(image_url != undefined && image_url != null){
+      filterImageFromURL(image_url).then((image)=>{
+        res.send(image)
+        deleteLocalFiles([image])
+      }).catch((err) => {
+        res.send(err)
+      })
+    }
+    else{
+      res.send('Please provide a valid image url')
+    }
+  });
   
 
   // Start the Server
