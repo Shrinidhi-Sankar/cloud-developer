@@ -37,19 +37,24 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     res.send("try GET /filteredimage?image_url={{}}")
   });
 
-  app.get( "/filteredimage/", async ( req, res ) => {
-    let image_url = req.query.image_url || req.headers.image_url;
+  app.get( "/filteredimage/", ( req, res ) => {
+    let imageUrl = req.query.image_url || req.headers.image_url;
     console.log(req.query)
-    if(image_url != undefined && image_url != null){
-      filterImageFromURL(image_url).then((image)=>{
-        res.send(image)
-        deleteLocalFiles([image])
+    if(imageUrl != undefined && imageUrl != null){
+      filterImageFromURL(imageUrl).then((imagePath)=>{
+        res.status(200).sendFile(imagePath, (err) => {
+          if (err) { 
+            return res.status(400).send('Issue while processing image **'+err); 
+          }
+          // Deleting the used image file.
+          deleteLocalFiles([imagePath])
+        })       
       }).catch((err) => {
-        res.send(err)
+        res.status(400).send(err)
       })
     }
     else{
-      res.send('Please provide a valid image url')
+      res.status(400).send('Please provide a valid image url')
     }
   });
   

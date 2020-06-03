@@ -23,7 +23,7 @@ export function filterImageFromURL(inputURL: string): Promise<string>{
                 })
             }).catch((err) =>{
                 console.log('Error in filterImage:',err);
-                reject(err)
+                reject('Error in image URL')
             })
             
     });
